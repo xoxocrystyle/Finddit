@@ -1,0 +1,14 @@
+{
+  "name": "reddites6",
+  "version": "1.0.0",
+  "description": "reddit search app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Crystal Navarro",
+  "license": "MIT",
+  "dependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
