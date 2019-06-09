@@ -126,11 +126,14 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = {
   search: function search(searchTerm, searchLimit, sortBy) {
-    console.log('searching ... ');
-    fetch("http://wwww.reddit.com/search.json?q=".concat(searchTerm)).then(function (res) {
+    return fetch("http://www.reddit.com/search.json?q=".concat(searchTerm, "&sort=").concat(sortBy, "&limit=").concat(searchLimit)).then(function (res) {
       return res.json();
     }).then(function (data) {
-      return console.log(data);
+      return data.data.children.map(function (data) {
+        return data.data;
+      });
+    }).catch(function (err) {
+      return console.log(err);
     });
   }
 };
@@ -138,30 +141,40 @@ exports.default = _default;
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
-var _redditapi = _interopRequireDefault(require("./redditapi.js"));
+var _redditapi = _interopRequireDefault(require("./redditapi"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var searchForm = document.getElementById('search-form');
 var searchInput = document.getElementById('search-input');
+var searchBtn = document.getElementById('search-btn');
 searchForm.addEventListener('submit', function (e) {
-  //get search term 
-  var searchTerm = searchInput.value;
-  console.log(searchTerm); //get sort
+  // Get sort
+  var sortBy = document.querySelector('input[name="sortby"]:checked').value; // Get limit
 
-  var sortBy = document.querySelector('input[name="sortby"]:checked').value; //get limit
+  var searchLimit = document.getElementById('limit').value; // Get search
 
-  var searchLimit = document.getElementById('limit').value;
-  console.log(searchLimit); //check inpput
+  var searchTerm = searchInput.value; // Check for input
 
-  if (searchTerm === '') {
-    showMessage('Input is empty. Please add a search term.', 'alert-danger');
-  } //clear input 
+  if (searchTerm == '') {
+    // Show message
+    showMessage('Please add a search term', 'alert-danger');
+  } // Clear field
 
 
-  searchInput.value = ''; //search Reddit 
+  searchInput.value = ''; // Search Reddit
 
-  _redditapi.default.search(searchTerm, searchLimit, sortBy);
+  _redditapi.default.search(searchTerm, searchLimit, sortBy).then(function (results) {
+    var output = '<div class="card-columns">';
+    console.log(results);
+    results.forEach(function (post) {
+      // Check for image
+      var image = post.preview ? post.preview.images[0].source.url : 'https://cdn.comparitech.com/wp-content/uploads/2017/08/reddit-1.jpg';
+      output += "\n      <div class=\"card mb-2\">\n      <img class=\"card-img-top\" src=\"".concat(image, "\" alt=\"Card image cap\">\n      <div class=\"card-body\">\n        <h5 class=\"card-title\">").concat(post.title, "</h5>\n        <p class=\"card-text\">").concat(truncateString(post.selftext, 100), "</p>\n        <a href=\"").concat(post.url, "\" target=\"_blank\n        \" class=\"btn btn-primary\">Read More</a>\n        <hr>\n        <span class=\"badge badge-secondary\">Subreddit: ").concat(post.subreddit, "</span> \n        <span class=\"badge badge-dark\">Score: ").concat(post.score, "</span>\n      </div>\n    </div>\n      ");
+    });
+    output += '</div>';
+    document.getElementById('results').innerHTML = output;
+  });
 
   e.preventDefault();
 }); //show message 
@@ -175,16 +188,22 @@ function showMessage(message, className) {
 
   var searchContainer = document.getElementById('search-container'); //get search
 
-  var search = document.getElementById('search');
-  console.log('sup'); //insert message
+  var search = document.getElementById('search'); //insert message
 
   searchContainer.insertBefore(div, search); //timeout 
 
   setTimeout(function () {
     return document.querySelector('.alert').remove();
   }, 3000);
+} //truncate string
+
+
+function truncateString(myString, limit) {
+  var shortened = myString.indexOf(' ', limit);
+  if (shortened == -1) return myString;
+  return myString.substring(0, shortened);
 }
-},{"./redditapi.js":"redditapi.js"}],"../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./redditapi":"redditapi.js"}],"../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -212,7 +231,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51697" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59590" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
