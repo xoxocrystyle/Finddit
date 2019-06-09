@@ -117,9 +117,74 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"index.js":[function(require,module,exports) {
-console.log('wot');
-},{}],"../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+})({"redditapi.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  search: function search(searchTerm, searchLimit, sortBy) {
+    console.log('searching ... ');
+    fetch("http://wwww.reddit.com/search.json?q=".concat(searchTerm)).then(function (res) {
+      return res.json();
+    }).then(function (data) {
+      return console.log(data);
+    });
+  }
+};
+exports.default = _default;
+},{}],"index.js":[function(require,module,exports) {
+"use strict";
+
+var _redditapi = _interopRequireDefault(require("./redditapi.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var searchForm = document.getElementById('search-form');
+var searchInput = document.getElementById('search-input');
+searchForm.addEventListener('submit', function (e) {
+  //get search term 
+  var searchTerm = searchInput.value;
+  console.log(searchTerm); //get sort
+
+  var sortBy = document.querySelector('input[name="sortby"]:checked').value; //get limit
+
+  var searchLimit = document.getElementById('limit').value;
+  console.log(searchLimit); //check inpput
+
+  if (searchTerm === '') {
+    showMessage('Input is empty. Please add a search term.', 'alert-danger');
+  } //clear input 
+
+
+  searchInput.value = ''; //search Reddit 
+
+  _redditapi.default.search(searchTerm, searchLimit, sortBy);
+
+  e.preventDefault();
+}); //show message 
+
+function showMessage(message, className) {
+  //create div 
+  var div = document.createElement('div');
+  div.className = "alert ".concat(className); //add text
+
+  div.appendChild(document.createTextNode(message)); //get parent container 
+
+  var searchContainer = document.getElementById('search-container'); //get search
+
+  var search = document.getElementById('search');
+  console.log('sup'); //insert message
+
+  searchContainer.insertBefore(div, search); //timeout 
+
+  setTimeout(function () {
+    return document.querySelector('.alert').remove();
+  }, 3000);
+}
+},{"./redditapi.js":"redditapi.js"}],"../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -147,7 +212,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62251" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51697" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
